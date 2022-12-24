@@ -1,0 +1,31 @@
+name: "web-app"
+mode: "dev"
+version: "1.0.0"
+host: "127.0.0.1"
+port: 8081
+starttime: "2022-11-06"
+machineid: 1
+
+auth:
+  jwtexpire: 8768
+log:
+  level: "debug"
+  filename: "web-app.log"
+  maxsize: 200
+  maxage: 30
+  maxbackups: 7
+mysql:
+  host: "127.0.0.1"
+  port: 3306
+  user: "root"
+  password: "123456"
+  dbname: "test"
+  maxopenconns: 200
+  maxidleconns:  18
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  db: 0
+  password: ""
+  poolsize: 100
+

@@ -1,0 +1,413 @@
+basePath: /api/v1
+definitions:
+  controller._ResponseCommunityList:
+    properties:
+      code:
+        $ref: '#/definitions/controller.ResCode'
+      data:
+        description: 数据
+        items:
+          $ref: '#/definitions/models.Community'
+        type: array
+      message:
+        description: 提示消息
+        type: string
+    type: object
+  controller._ResponsePostList:
+    properties:
+      code:
+        $ref: '#/definitions/controller.ResCode'
+      data:
+        description: 数据
+        items:
+          $ref: '#/definitions/models.ApiPostDetail'
+        type: array
+      message:
+        description: 提示消息
+        type: string
+    type: object
+  controller.ResCode:
+    enum:
+    - 1000
+    - 1001
+    - 1002
+    - 1003
+    - 1004
+    - 1005
+    - 1006
+    - 1007
+    type: integer
+    x-enum-varnames:
+    - CodeSuccess
+    - CodeInvalidParam
+    - CodeUserExist
+    - CodeUserNotExist
+    - CodeInvalidPassword
+    - CodeServerBusy
+    - CodeNeedLogin
+    - CodeInvalidToken
+  controller.ResponseData:
+    properties:
+      code:
+        $ref: '#/definitions/controller.ResCode'
+      data: {}
+      msg: {}
+    type: object
+  models.ApiPostDetail:
+    properties:
+      author_id:
+        type: integer
+      author_name:
+        type: string
+      community_id:
+        type: integer
+      community_name:
+        type: string
+      content:
+        type: string
+      create_time:
+        type: string
+      id:
+        type: integer
+      introduction:
+        type: string
+      status:
+        type: integer
+      title:
+        type: string
+      update_time:
+        type: string
+      vote_num:
+        type: integer
+    required:
+    - community_id
+    - content
+    - title
+    type: object
+  models.Community:
+    properties:
+      community_name:
+        type: string
+      create_time:
+        type: string
+      id:
+        type: integer
+      introduction:
+        type: string
+      update_time:
+        type: string
+    type: object
+  models.ParamSignUp:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      re_password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - re_password
+    - username
+    type: object
+host: 127.0.0.1:8081
+info:
+  contact:
+    email: support@swagger.io
+    name: kiki
+    url: http://www.swagger.io/support
+  description: 本项目提供用户注册、用户登录、发帖及查看帖子、帖子投票等功能；
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  version: "1.0"
+paths:
+  /community:
+    get:
+      consumes:
+      - application/json
+      description: 返回社区分类详情
+      parameters:
+      - description: Bearer 用户令牌
+        in: header
+        name: Authorization
+        type: string
+      - description: 社区id
+        in: path
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller._ResponseCommunityList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller._ResponseCommunityList'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取社区分类详情
+      tags:
+      - 社区相关接口
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: 用户登录
+      parameters:
+      - in: query
+        name: password
+        required: true
+        type: string
+      - in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.ResponseData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ResponseData'
+      summary: 用户登录
+      tags:
+      - 用户相关接口
+  /post:
+    get:
+      consumes:
+      - application/json
+      description: 查看帖子详情
+      parameters:
+      - description: Bearer 用户令牌
+        in: header
+        name: Authorization
+        type: string
+      - description: 帖子id
+        in: path
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+      security:
+      - ApiKeyAuth: []
+      summary: 查看帖子详情
+      tags:
+      - 帖子相关接口
+    post:
+      consumes:
+      - application/json
+      description: 创建帖子
+      parameters:
+      - description: Bearer 用户令牌
+        in: header
+        name: Authorization
+        type: string
+      - in: query
+        name: author_id
+        type: integer
+      - in: query
+        name: community_id
+        required: true
+        type: integer
+      - in: query
+        name: content
+        required: true
+        type: string
+      - in: query
+        name: create_time
+        type: string
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: status
+        type: integer
+      - in: query
+        name: title
+        required: true
+        type: string
+      - in: query
+        name: update_time
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+      security:
+      - ApiKeyAuth: []
+      summary: 创建帖子
+      tags:
+      - 帖子相关接口
+  /postlist:
+    get:
+      consumes:
+      - application/json
+      description: 查询帖子列表
+      parameters:
+      - description: Bearer 用户令牌
+        in: header
+        name: Authorization
+        type: string
+      - description: 可以为空
+        in: query
+        name: community_id
+        type: integer
+      - description: 排序依据
+        example: score
+        in: query
+        name: order
+        type: string
+      - description: 页码
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 每页数据量
+        example: 10
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+      security:
+      - ApiKeyAuth: []
+      summary: 根据最新时间/分数排序查询帖子列表
+      tags:
+      - 帖子相关接口
+  /posts:
+    get:
+      consumes:
+      - application/json
+      description: 获取帖子列表
+      parameters:
+      - description: Bearer 用户令牌
+        in: header
+        name: Authorization
+        type: string
+      - description: 分页页码
+        in: query
+        name: page
+        type: string
+      - description: 每页显示数
+        in: query
+        name: size
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取帖子列表
+      tags:
+      - 帖子相关接口
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: 用户注册
+      parameters:
+      - description: 注册参数
+        in: body
+        name: object
+        schema:
+          $ref: '#/definitions/models.ParamSignUp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.ResponseData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.ResponseData'
+      summary: 用户注册
+      tags:
+      - 用户相关接口
+  /vote:
+    post:
+      consumes:
+      - application/json
+      description: 帖子投票接口
+      parameters:
+      - description: Bearer 用户令牌
+        in: header
+        name: Authorization
+        type: string
+      - description: 赞成票1；反对票-1
+        enum:
+        - 1
+        - 0
+        - -1
+        example: "0"
+        in: query
+        name: direction
+        required: true
+        type: string
+      - description: 帖子id
+        in: query
+        name: post_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller._ResponsePostList'
+      security:
+      - ApiKeyAuth: []
+      summary: 帖子投票接口
+      tags:
+      - 帖子相关接口
+swagger: "2.0"
